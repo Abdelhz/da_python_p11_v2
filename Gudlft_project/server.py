@@ -46,8 +46,6 @@ def find_item_by_attribute(items, attribute, value):
 app = Flask(__name__)
 app.secret_key = 'something_special'
 
-competitions = loadCompetitions()
-clubs = loadClubs()
 
 @app.route('/')
 def index():
@@ -57,17 +55,19 @@ def index():
 def showSummary():
 
     clubs = loadClubs()
+    competitions = loadCompetitions()
     
     club = find_item_by_attribute(clubs, 'email', request.form['email'])
     #club = [club for club in clubs if club['email'] == request.form['email']][0]
+    
     return render_template('welcome.html',club=club,competitions=competitions)
 
 
 @app.route('/book/<competition>/<club>')
 def book(competition,club):
 
-    competitions = loadCompetitions()
     clubs = loadClubs()
+    competitions = loadCompetitions()
 
     foundClub = find_item_by_attribute(clubs, 'name', club)
     #foundClub = [c for c in clubs if c['name'] == club][0]
@@ -85,8 +85,8 @@ def book(competition,club):
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
 
-    competitions = loadCompetitions()
     clubs = loadClubs()
+    competitions = loadCompetitions()
     
     competition = find_item_by_attribute(competitions, 'name', request.form['competition'])
     #competition = [c for c in competitions if c['name'] == request.form['competition']][0]
