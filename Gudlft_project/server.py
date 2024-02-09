@@ -1,18 +1,47 @@
 import json
 from flask import Flask,render_template,request,redirect,flash,url_for
+from email_validator import validate_email, EmailNotValidError
 
 
 def loadClubs():
-    with open('clubs.json') as c:
-         listOfClubs = json.load(c)['clubs']
-         return listOfClubs
-
+    """
+    Load the clubs from the 'clubs.json' file and return the list of clubs.
+    If the file is not found or cannot be decoded as JSON, an empty list is returned.
+    """
+    try:
+        with open('clubs.json') as clubs:
+            listOfClubs = json.load(clubs)['clubs']
+            return listOfClubs
+    except (FileNotFoundError, json.JSONDecodeError) as e: 
+        print(e)
+        return []
 
 def loadCompetitions():
-    with open('competitions.json') as comps:
-         listOfCompetitions = json.load(comps)['competitions']
-         return listOfCompetitions
+    """
+    Load competitions from the 'competitions.json' file and return a list of competitions.
+    If the file is not found or cannot be decoded as JSON, an empty list is returned.
+    """
+    try:
+        with open('competitions.json') as comps:
+            listOfCompetitions = json.load(comps)['competitions']
+            return listOfCompetitions
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(e)
+        return []
 
+def find_item_by_attribute(items, attribute, value):
+    """
+    Find an item (club or competition) in a list of dictionaries by a given attribute (name or email).
+
+    Parameters:
+    items (list): The list of items (clubs and competitions dictionaries).
+    attribute (str): The attribute to search by (club's of competition's name or club's email).
+    value (str): The value of the attribute to find.
+
+    Returns:
+    dict: The first item that matches the attribute value, or None if no item is found.
+    """
+    return next((item for item in items if item[attribute] == value), None)
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
@@ -26,14 +55,47 @@ def index():
 
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
-    club = [club for club in clubs if club['email'] == request.form['email']][0]
+    
+    clubs = loadClubs()
+    
+    try:
+        email = request.form['email']
+        try:
+            email_validation = validate_email(email) # validate and get info
+            email = email_validation["email"] # replace with normalized form
+        except EmailNotValidError as e:
+            # email is not valid, exception message,
+            flash("Invalid email address : " + str(e) + "\n Please try again.")
+            return redirect(url_for('index'))
+        club = find_item_by_attribute(clubs, 'email', email)
+        #club = next((club_search for club_search in clubs if club_search['email'] == email), None)
+    except KeyError:
+        flash("Invalid form data. Please try again.")
+        return redirect(url_for('index'))
+    
+    if not club:
+        flash("Club not found. Please try again.")
+        return redirect(url_for('index'))
+    
+    competitions = loadCompetitions()
+
     return render_template('welcome.html',club=club,competitions=competitions)
 
+@app.route('/book/<competition_name>/<club_name>')
+def book(competition_name, club_name):
+    competitions = loadCompetitions()
+    clubs = loadClubs()
+    try:
+        foundClub = find_item_by_attribute(clubs, 'name', club_name)
+        #foundClub = [c for c in clubs if c['name'] == club][0]
+        
+        foundCompetition = find_item_by_attribute(competitions, 'name', competition_name)
+        #foundCompetition = [c for c in competitions if c['name'] == competition][0]
+    except KeyError:
+        flash("Invalid form data. Please try again.")
+        return redirect(url_for('index'))
 
-@app.route('/book/<competition>/<club>')
-def book(competition,club):
-    foundClub = [c for c in clubs if c['name'] == club][0]
-    foundCompetition = [c for c in competitions if c['name'] == competition][0]
+
     if foundClub and foundCompetition:
         return render_template('booking.html',club=foundClub,competition=foundCompetition)
     else:
@@ -43,8 +105,15 @@ def book(competition,club):
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+    competitions = loadCompetitions()
+    clubs = loadClubs()
+
+    competition = find_item_by_attribute(competitions, 'name', request.form['competition'])
+    #competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+
+    club = find_item_by_attribute(clubs, 'name', request.form['club'])
+    #club = [c for c in clubs if c['name'] == request.form['club']][0]
+    
     placesRequired = int(request.form['places'])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     flash('Great-booking complete!')
