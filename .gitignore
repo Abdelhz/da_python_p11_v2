@@ -2,12 +2,16 @@ bin
 include
 lib
 .Python
-tests/
 .envrc
+test/
 __pycache__
 env_Gudlft_project/
 da_python_p11_v2.code-workspace
 Corrected_issues.md
 identified_issues.md
 project_comprehension.md
+Corrected_issues.html
+Corrected_issues.pdf
+identified_issues.pdf
+project_comprehension.pdf
 test.py
