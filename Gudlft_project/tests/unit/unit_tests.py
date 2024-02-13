@@ -1,5 +1,5 @@
 import pytest
-from ...server import app, loadClubs, loadCompetitions
+from ...server import app
 
 ## 1. ERROR: Error handling if competition or club not found in book route
 def test_book(client):
