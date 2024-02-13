@@ -28,6 +28,17 @@ def loadCompetitions():
         print(e)
         return []
 
+def saveData(filename, data):
+    """
+    Save data to a JSON file.
+
+    Parameters:
+    filename (str): The name of the file to save to.
+    data (list): The data to save.
+    """
+    with open(filename, 'w') as file:
+        json.dump({'clubs': data} if filename == 'clubs.json' else {'competitions': data}, file)
+
 def find_item_by_attribute(items, attribute, value):
     """
     Find an item (club or competition) in a list of dictionaries by a given attribute (name or email).
@@ -130,9 +141,15 @@ def purchasePlaces():
     
     # Deducting places from the competition
     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
-    
+    # Save the updated competitions back to the JSON files
+    saveData('competitions.json', competitions)
+
     # Deducting points from the club
     club['points'] = int(club['points']) - placesRequired
+    # Save the updated clubs back to the JSON files
+    saveData('clubs.json', clubs)
+
+
     
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
