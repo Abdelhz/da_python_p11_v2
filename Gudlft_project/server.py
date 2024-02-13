@@ -1,6 +1,5 @@
 import json
 from flask import Flask,render_template,request,redirect,flash,url_for
-from email_validator import validate_email, EmailNotValidError
 
 
 def loadClubs():
@@ -60,13 +59,6 @@ def showSummary():
     
     try:
         email = request.form['email']
-        try:
-            email_validation = validate_email(email) # validate and get info
-            email = email_validation["email"] # replace with normalized form
-        except EmailNotValidError as e:
-            # email is not valid, exception message,
-            flash("Invalid email address : " + str(e) + "\n Please try again.")
-            return redirect(url_for('index'))
         club = find_item_by_attribute(clubs, 'email', email)
         #club = next((club_search for club_search in clubs if club_search['email'] == email), None)
     except KeyError:
