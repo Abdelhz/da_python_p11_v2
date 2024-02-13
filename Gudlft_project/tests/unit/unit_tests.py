@@ -17,3 +17,9 @@ def test_purchasePlaces_no_enough_places(client):
 def test_purchasePlaces_invalid_places(client):
     response = client.post('/purchasePlaces', data=dict(competition='Fall Classic', club='Simply Lift', places='invalid'), follow_redirects=True)
     assert b'Invalid value for number of places. Please try again.' in response.data
+
+
+## 3. BUG: Clubs shouldn't be able to book more than 12 places per competition
+def test_purchasePlaces_more_than_12_places(client):
+    response = client.post('/purchasePlaces', data=dict(competition='Spring Festival', club='Simply Lift', places='13'), follow_redirects=True)
+    assert b'You cannot book more than 12 places per competition. Please try again.' in response.data

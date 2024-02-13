@@ -114,6 +114,11 @@ def purchasePlaces():
         return redirect(url_for('book', competition=competition['name'], club=club['name']))
 
     # Error handling if the number of club's points is not enough for the number of places required.
+    if placesRequired > 12:
+        flash("You cannot book more than 12 places per competition. Please try again.")
+        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+
+    # Error handling if the number of club's points is not enough for the number of places required.
     if placesRequired > int(club['points']):
         flash("Not enough points Available to the club. Please try again.")
         return redirect(url_for('book', competition=competition['name'], club=club['name']))
