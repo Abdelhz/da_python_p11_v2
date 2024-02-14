@@ -90,7 +90,7 @@ def book(competition_name, club_name):
             return render_template('booking.html',club=foundClub,competition=foundCompetition)
         
         else:
-            flash("You cannot book a place in a past competition. Please try again.")
+            flash("This competition is outdated, you cannot book places for it. Please choose another competition.")
             return render_template('welcome.html', club=foundClub, competitions=competitions)
     
     else:

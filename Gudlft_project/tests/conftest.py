@@ -1,5 +1,10 @@
 import pytest
-from server import app as flask_app  # import your Flask application
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from Gudlft_project.server import app as flask_app  # import your Flask application# import your Flask application
 
 @pytest.fixture
 def client():
