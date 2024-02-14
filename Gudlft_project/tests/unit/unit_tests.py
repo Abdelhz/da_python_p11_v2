@@ -1,5 +1,10 @@
+import sys
+import os
 import pytest
-from ...server import app
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
+from Gudlft_project.server import app
 
 ## 1. ERROR: Error handling if competition or club not found in book route
 def test_book(client):
