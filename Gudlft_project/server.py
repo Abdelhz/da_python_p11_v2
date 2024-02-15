@@ -98,6 +98,8 @@ def purchasePlaces():
 
     clubs = loadClubs()
     competitions = loadCompetitions()
+    print("Loaded clubs:", clubs)  # Debug print statement
+    print("Loaded competitions:", competitions)  # Debug print statement
     
     # Error handling if the clubs or competitions data are not in conformity.
     try:
@@ -108,8 +110,12 @@ def purchasePlaces():
         #club = [c for c in clubs if c['name'] == request.form['club']][0]
     
     except KeyError:
+        print("KeyError:", e)  # Debug print statement       
         flash("Invalid form data. Please try again.")
         return redirect(url_for('index'))
+    
+    print("Competition:", competition)  # Debug print statement
+    print("Club:", club)  # Debug print statement
     
     # If the club or the competition is not found in the database.
     if not competition or not club:
@@ -150,7 +156,8 @@ def purchasePlaces():
     saveData('clubs.json', clubs)
 
 
-    
+
+    print("Data SAVED")  # Debug print statement    
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
