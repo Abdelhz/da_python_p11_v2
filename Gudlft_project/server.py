@@ -28,6 +28,17 @@ def loadCompetitions():
         print(e)
         return []
 
+def saveData(filename, data):
+    """
+    Save data to a JSON file.
+
+    Parameters:
+    filename (str): The name of the file to save to.
+    data (list): The data to save.
+    """
+    with open(filename, 'w') as file:
+        json.dump({'clubs': data} if filename == 'clubs.json' else {'competitions': data}, file)
+
 def find_item_by_attribute(items, attribute, value):
     """
     Find an item (club or competition) in a list of dictionaries by a given attribute (name or email).
@@ -110,6 +121,8 @@ def purchasePlaces():
 
     competitions = loadCompetitions()
     clubs = loadClubs()
+    print("Loaded clubs:", clubs)  # Debug print statement
+    print("Loaded competitions:", competitions)  # Debug print statement
     
     # Error handling if the clubs or competitions data are not in conformity.
     try:
@@ -120,8 +133,12 @@ def purchasePlaces():
         #club = [c for c in clubs if c['name'] == request.form['club']][0]
     
     except KeyError:
+        print("KeyError:", e)  # Debug print statement       
         flash("Invalid form data. Please try again.")
         return redirect(url_for('index'))
+    
+    print("Competition:", competition)  # Debug print statement
+    print("Club:", club)  # Debug print statement
     
     # If the club or the competition is not found in the database.
     if not competition or not club:
@@ -153,10 +170,17 @@ def purchasePlaces():
     
     # Deducting places from the competition
     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
-    
+    # Save the updated competitions back to the JSON files
+    saveData('competitions.json', competitions)
+
     # Deducting points from the club
     club['points'] = int(club['points']) - placesRequired
-    
+    # Save the updated clubs back to the JSON files
+    saveData('clubs.json', clubs)
+
+
+
+    print("Data SAVED")  # Debug print statement    
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
