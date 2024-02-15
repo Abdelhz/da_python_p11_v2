@@ -3,9 +3,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summary | GUDLFT Registration</title>
+    <style>
+        .spacing {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+
+    <div class="spacing">
         <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
+    </div>
+
+        <!-- Add a button that links to the pointsDisplay route -->
+        <div class="spacing">
+            <a href="{{ url_for('pointsDisplay') }}" class="button">Clubs</a>
+        </div>
 
     {% with messages = get_flashed_messages()%}
     {% if messages %}
@@ -15,7 +28,11 @@
         {% endfor %}
        </ul>
     {% endif%}
-    Points available: {{club['points']}}
+
+    <div class="spacing">
+        Points available: {{club['points']}}
+    </div>
+
     <h3>Competitions:</h3>
     <ul>
         {% for comp in competitions%}

@@ -5,7 +5,7 @@ import json
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
-from Gudlft_project.server import app, saveData
+from Gudlft_project.server import app, saveData, loadClubs
 
 ## 1. ERROR: Entering a unknown email crashes the app.
 def test_showSummary(client):
@@ -99,3 +99,13 @@ def test_saveData(tmpdir):
     with open(competitions_file) as f:
         assert json.load(f) == {'competitions': competitions}
 '''
+
+## 6. FEATURE: Displaying clubs and their point in point display board.
+def test_pointsDisplay(client):
+    # Test case for points display
+    response = client.get('/pointsDisplay', follow_redirects=True)
+    assert response.status_code == 200
+    clubs = loadClubs()
+    for club in clubs:
+        assert bytes(club['name'], 'utf-8') in response.data
+        assert bytes(str(club['points']), 'utf-8') in response.data
