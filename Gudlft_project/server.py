@@ -1,6 +1,6 @@
 import json
 from flask import Flask,render_template,request,redirect,flash,url_for
-
+from datetime import datetime
 
 def loadClubs():
     """
@@ -86,13 +86,24 @@ def book(competition_name, club_name):
         flash("Invalid form data. Please try again.")
         return redirect(url_for('index'))
 
-
     if foundClub and foundCompetition:
-        return render_template('booking.html',club=foundClub,competition=foundCompetition)
+        try:
+            competition_date = datetime.strptime(foundCompetition['date'], '%Y-%m-%d %H:%M:%S')
+        
+        except KeyError:
+            flash("Invalid form data. Please try again.")
+            return redirect(url_for('index'))
+        
+        if not competition_date < datetime.now():
+            return render_template('booking.html',club=foundClub,competition=foundCompetition)
+        
+        else:
+            flash("This competition is outdated, you cannot book places for it. Please choose another competition.")
+            return render_template('welcome.html', club=foundClub, competitions=competitions)
+    
     else:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=foundClub, competitions=competitions)
-
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():

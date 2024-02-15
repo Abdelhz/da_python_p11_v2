@@ -6,13 +6,13 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from Gudlft_project.server import app
 
-## 1. ERROR: Entering a unknown email crashes the app
+## 1. ERROR: Entering a unknown email crashes the app.
 def test_showSummary(client):
     response = client.post('/showSummary', data=dict(email='unknown@email.com'), follow_redirects=True)
     assert response.status_code == 200
     assert b'Club not found. Please try again.' in response.data
 
-## 1.2. ERROR: Error handling if competition or club not found in book route
+## 1.2. ERROR: Error handling if competition or club not found in book route.
 def test_book(client):
     response = client.get('/book/unknown_competition/unknown_club', follow_redirects=True)
     assert response.status_code == 200
@@ -46,3 +46,11 @@ def test_purchasePlaces_more_than_12_places(client, clubs, competitions):
     response = client.post('/purchasePlaces', data=dict(competition=competitions[0]['name'], club=clubs[0]['name'], places='13'), follow_redirects=True)
     print(response.get_data(as_text=True))  # print the response data
     assert 'You cannot book more than 12 places per competition. Please try again.' in response.get_data(as_text=True)
+
+## 4. BUG: Booking in past competitions.
+def test_booking_past_competition(client):
+    club_name = "She Lifts"
+    OutDated_competition_name = "Hearts OF stone"
+
+    response = client.get(f'/book/{OutDated_competition_name}/{club_name}')
+    assert "This competition is outdated, you cannot book places for it. Please choose another competition." in response.get_data(as_text=True)
