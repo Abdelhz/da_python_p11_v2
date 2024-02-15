@@ -96,17 +96,51 @@ def book(competition_name, club_name):
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
+
     competitions = loadCompetitions()
     clubs = loadClubs()
-
-    competition = find_item_by_attribute(competitions, 'name', request.form['competition'])
-    #competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-
-    club = find_item_by_attribute(clubs, 'name', request.form['club'])
-    #club = [c for c in clubs if c['name'] == request.form['club']][0]
     
-    placesRequired = int(request.form['places'])
-    competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
+    # Error handling if the clubs or competitions data are not in conformity.
+    try:
+        competition = find_item_by_attribute(competitions, 'name', request.form['competition'])
+        #competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+        
+        club = find_item_by_attribute(clubs, 'name', request.form['club'])
+        #club = [c for c in clubs if c['name'] == request.form['club']][0]
+    
+    except KeyError:
+        flash("Invalid form data. Please try again.")
+        return redirect(url_for('index'))
+    
+    # If the club or the competition is not found in the database.
+    if not competition or not club:
+        flash("Club or Competition not found")
+        return render_template('welcome.html', club=club, competitions=competitions)
+
+    # Error handling if the number of places required is not a number.
+    try:
+        placesRequired = int(request.form['places'])
+    
+    except ValueError:
+        flash("Invalid value for number of places required. Please try again.")
+        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+
+    # Error handling if the number of club's points is not enough for the number of places required.
+    if placesRequired > int(club['points']):
+        flash("Not enough points Available to the club. Please try again.")
+        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+
+    # Error handling if the number of competition's available places is not enough for the number of places required.
+    if placesRequired > int(competition['numberOfPlaces']):
+        flash("Not enough places available in the competition. Please try again.")
+        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+    
+    # Deducting places from the competition
+    competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
+    
+    # Deducting points from the club
+    club['points'] = int(club['points']) - placesRequired
+    
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
 
