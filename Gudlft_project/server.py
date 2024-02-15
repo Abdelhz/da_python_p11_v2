@@ -151,22 +151,22 @@ def purchasePlaces():
     
     except ValueError:
         flash("Invalid value for number of places required. Please try again.")
-        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+        return redirect(url_for('book', competition_name=competition['name'], club_name=club['name']))
 
     # Error handling if the number of club's points is not enough for the number of places required.
     if placesRequired > 12:
         flash("You cannot book more than 12 places per competition. Please try again.")
-        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+        return redirect(url_for('book', competition_name=competition['name'], club_name=club['name']))
 
     # Error handling if the number of club's points is not enough for the number of places required.
     if placesRequired > int(club['points']):
         flash("Not enough points Available to the club. Please try again.")
-        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+        return redirect(url_for('book', competition_name=competition['name'], club_name=club['name']))
 
     # Error handling if the number of competition's available places is not enough for the number of places required.
     if placesRequired > int(competition['numberOfPlaces']):
         flash("Not enough places available in the competition. Please try again.")
-        return redirect(url_for('book', competition=competition['name'], club=club['name']))
+        return redirect(url_for('book', competition_name=competition['name'], club_name=club['name']))
     
     # Deducting places from the competition
     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
@@ -183,7 +183,6 @@ def purchasePlaces():
     print("Data SAVED")  # Debug print statement    
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
-
 
 @app.route('/pointsDisplay', methods=['GET'])
 def pointsDisplay():

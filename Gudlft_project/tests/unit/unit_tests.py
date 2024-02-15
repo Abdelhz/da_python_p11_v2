@@ -20,37 +20,40 @@ def test_book(client):
     assert b'Something went wrong-please try again' in response.data
 
 ## 2. BUG: Clubs should not be able to use more than their points Available or competition places available.
-def test_purchasePlaces(client, clubs, competitions):
+def test_purchasePlaces(monkeypatch, client, clubs, competitions):
+    monkeypatch.setattr('Gudlft_project.server.loadClubs', lambda: clubs)
+    monkeypatch.setattr('Gudlft_project.server.loadCompetitions', lambda: competitions)    
     #response = client.post('/purchasePlaces', data=dict(competition='Trials of Osiris', club='Iron lords', places='1'), follow_redirects=True)
     response = client.post('/purchasePlaces', data=dict(competition=competitions[4]['name'], club=clubs[3]['name'], places='1'), follow_redirects=True)
     #print(response.get_data(as_text=True))  # print the response data
     assert 'Great-booking complete!' in response.get_data(as_text=True)
 
-def test_purchasePlaces_no_enough_points(client, clubs, competitions):
+def test_purchasePlaces_no_enough_points(monkeypatch, client, clubs, competitions):
+    monkeypatch.setattr('Gudlft_project.server.loadClubs', lambda: clubs)
+    monkeypatch.setattr('Gudlft_project.server.loadCompetitions', lambda: competitions)
     #response = client.post('/purchasePlaces', data=dict(competition='Fall Classic', club='Iron lords', places='10'), follow_redirects=True)
     response = client.post('/purchasePlaces', data=dict(competition=competitions[1]['name'], club=clubs[3]['name'], places='10'), follow_redirects=True)
     print(response.get_data(as_text=True))  # print the response data
     assert 'Not enough points Available to the club. Please try again.' in response.get_data(as_text=True)
 
-def test_purchasePlaces_no_enough_places(client, clubs, competitions):
+def test_purchasePlaces_no_enough_places(monkeypatch, client, clubs, competitions):
+    monkeypatch.setattr('Gudlft_project.server.loadClubs', lambda: clubs)
+    monkeypatch.setattr('Gudlft_project.server.loadCompetitions', lambda: competitions)
     #response = client.post('/purchasePlaces', data=dict(competition='Blazing fire', club='Simply Lift', places='12'), follow_redirects=True)
     response = client.post('/purchasePlaces', data=dict(competition=competitions[3]['name'], club=clubs[0]['name'], places='12'), follow_redirects=True)
     print(response.get_data(as_text=True))  # print the response data
     assert 'Not enough places available in the competition. Please try again.' in response.get_data(as_text=True)
 
-def test_purchasePlaces_invalid_places(client, clubs, competitions):
+def test_purchasePlaces_invalid_places(monkeypatch, client, clubs, competitions):
+    monkeypatch.setattr('Gudlft_project.server.loadClubs', lambda: clubs)
+    monkeypatch.setattr('Gudlft_project.server.loadCompetitions', lambda: competitions)
     #response = client.post('/purchasePlaces', data=dict(competition='Fall Classic', club='Simply Lift', places='invalid'), follow_redirects=True)
     response = client.post('/purchasePlaces', data=dict(competition=competitions[1]['name'], club=clubs[0]['name'], places='invalid'), follow_redirects=True)
     #print(response.get_data(as_text=True))  # print the response data
     assert 'Invalid value for number of places required. Please try again.' in response.get_data(as_text=True)
 
-def test_purchasePlaces_invalid_places(client, clubs, competitions):
-    #response = client.post('/purchasePlaces', data=dict(competition='Fall Classic', club='Simply Lift', places='invalid'), follow_redirects=True)
-    response = client.post('/purchasePlaces', data=dict(competition=competitions[1]['name'], club=clubs[0]['name'], places='invalid'), follow_redirects=True)
-    assert 'Invalid value for number of places required. Please try again.' in response.get_data(as_text=True)
-
 ## 3. BUG: Clubs shouldn't be able to book more than 12 places per competition
-def test_purchasePlaces_more_than_12_places(client, clubs, competitions):
+def test_purchasePlaces_more_than_12_places(monkeypatch, client, clubs, competitions):
     #response = client.post('/purchasePlaces', data=dict(competition='Spring Festival', club='Simply Lift', places='13'), follow_redirects=True)
     response = client.post('/purchasePlaces', data=dict(competition=competitions[0]['name'], club=clubs[0]['name'], places='13'), follow_redirects=True)
     print(response.get_data(as_text=True))  # print the response data
