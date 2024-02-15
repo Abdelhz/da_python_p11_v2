@@ -42,7 +42,6 @@ def find_item_by_attribute(items, attribute, value):
     """
     return next((item for item in items if item[attribute] == value), None)
 
-
 app = Flask(__name__)
 app.secret_key = 'something_special'
 
@@ -53,15 +52,24 @@ def index():
 
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
-
+    
     clubs = loadClubs()
+    
+    try:
+        email = request.form['email']
+        club = find_item_by_attribute(clubs, 'email', email)
+        
+    except KeyError:
+        flash("Invalid form data. Please try again.")
+        return redirect(url_for('index'))
+    
+    if not club:
+        flash("Club not found. Please try again.")
+        return redirect(url_for('index'))
+    
     competitions = loadCompetitions()
-    
-    club = find_item_by_attribute(clubs, 'email', request.form['email'])
-    #club = [club for club in clubs if club['email'] == request.form['email']][0]
-    
-    return render_template('welcome.html',club=club,competitions=competitions)
 
+    return render_template('welcome.html',club=club,competitions=competitions)
 
 @app.route('/book/<competition>/<club>')
 def book(competition,club):
@@ -84,13 +92,12 @@ def book(competition,club):
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
-
-    clubs = loadClubs()
     competitions = loadCompetitions()
-    
+    clubs = loadClubs()
+
     competition = find_item_by_attribute(competitions, 'name', request.form['competition'])
     #competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    
+
     club = find_item_by_attribute(clubs, 'name', request.form['club'])
     #club = [c for c in clubs if c['name'] == request.form['club']][0]
     
