@@ -102,6 +102,7 @@ def purchasePlaces():
 
 @app.route('/pointsDisplay', methods=['GET'])
 def pointsDisplay():
+    clubs = loadClubs()
     return render_template('points_display.html', clubs=clubs)
 
 
