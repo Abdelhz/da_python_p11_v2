@@ -58,7 +58,7 @@ def showSummary():
     try:
         email = request.form['email']
         club = find_item_by_attribute(clubs, 'email', email)
-        
+
     except KeyError:
         flash("Invalid form data. Please try again.")
         return redirect(url_for('index'))
@@ -70,24 +70,28 @@ def showSummary():
     competitions = loadCompetitions()
 
     return render_template('welcome.html',club=club,competitions=competitions)
+@app.route('/book/<competition_name>/<club_name>')
+def book(competition_name, club_name):
 
-@app.route('/book/<competition>/<club>')
-def book(competition,club):
-
-    clubs = loadClubs()
     competitions = loadCompetitions()
-
-    foundClub = find_item_by_attribute(clubs, 'name', club)
-    #foundClub = [c for c in clubs if c['name'] == club][0]
-
-    foundCompetition = find_item_by_attribute(competitions, 'name', competition)
-    #foundCompetition = [c for c in competitions if c['name'] == competition][0]
+    clubs = loadClubs()
     
+    try:
+        foundClub = find_item_by_attribute(clubs, 'name', club_name)
+        #foundClub = [c for c in clubs if c['name'] == club][0]
+        
+        foundCompetition = find_item_by_attribute(competitions, 'name', competition_name)
+        #foundCompetition = [c for c in competitions if c['name'] == competition][0]
+    except KeyError:
+        flash("Invalid form data. Please try again.")
+        return redirect(url_for('index'))
+
+
     if foundClub and foundCompetition:
         return render_template('booking.html',club=foundClub,competition=foundCompetition)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=foundClub, competitions=competitions)
 
 
 @app.route('/purchasePlaces',methods=['POST'])
