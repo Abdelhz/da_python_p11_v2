@@ -29,6 +29,11 @@
             "name": "The Maw Of Lorkhaj",
             "date": "2025-10-22 13:30:00",
             "numberOfPlaces": "10"
+        },
+        {
+            "name": "Borg clash",
+            "date": "2025-10-22 13:30:00",
+            "numberOfPlaces": "80000"
         }
 
     ]

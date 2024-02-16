@@ -16,5 +16,10 @@
     {   "name":"Iron lords",
         "email": "Ironlords@Ironlords.co.uk",
         "points":"6"
+    },
+    {   
+        "name":"locutus clan",
+        "email": "locutusclan@locutusclan.com",
+        "points":"80000"
     }
 ]}
