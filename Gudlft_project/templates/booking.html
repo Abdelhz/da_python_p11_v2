@@ -7,6 +7,18 @@
 <body>
     <h2>{{competition['name']}}</h2>
     Places available: {{competition['numberOfPlaces']}}
+
+    <!-- Flash messages segment -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <form action="/purchasePlaces" method="post">
         <input type="hidden" name="club" value="{{club['name']}}">
         <input type="hidden" name="competition" value="{{competition['name']}}">
