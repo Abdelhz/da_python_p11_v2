@@ -69,7 +69,59 @@
 
 5. Testing
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
+    In this pro.
 
     We also like to show how well we're testing, so there's a module called
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+
+## Issues and branches
+
+**We have divided and the repository in many different branches, each one for the identified issues**:
+
+*List of branches and issues they treat :*
+
+* **basic_branch_improvements** : In this branch we implemented basic code improvements, like error handling with "try, except". This branch served as base for all the following branches.
+
+* **FIX_01/ERROR_Entering_unknown_email_crashes_app** : In this branch we treat the issue where the application crashes when entering a non existant email address.
+
+* **FIX_01/2/ERROR_Handling_NotFound_competition_Crashes_app** : This is a sub branch for the 1st issue, in it we treat the same issue but this time for the "book" route.
+
+* **FIX_02/BUG_Using_More_Points-Or-Places_Than_Available** : In this branch we treat the issue where the users tries to purchase more places than the number of points the club possesses. We also added to it the fix for the issue where the user tries to purchase more places than the number of places the competition possesses.
+
+* **FIX_03/increment-to-FIX_02/BUG_booking_more_than_12_places_per_comp** : This branche is an increment to the previous branch (FIX_02), this is done to avoid bugs since we are working on the same route (purchasePlaces).
+In this branch we treat the issue where the user tries to purchase more than 12 places (12 is the maximum number of places a club is allowed to purchase).
+
+* **FIX_04/increment-to-FIX_01/2/BUG_booking_in_past_competitions** : This branche is an increment to the previous branch (FIX_01/2), this is done to avoid bugs since we are working on the same route (book).
+In this branch we treat the issue where the user tries to purchase places for a past competition ! In this case the user cannot access the "purchasePlaces" page !
+
+* **FIX_05/increment-to-FIX_03/BUG_Points_and_places_updates_are_not_reflected** : This branche is an increment to the previous branch (FIX_03), this is done to avoid bugs since we are working on the same route (purchasePlaces).
+In this branch we treat the issue where the persistance of date is not assured for the update of club's points (When  purchasing places the club's points are changed and the updates were not reflected on the file), we added to it the fix for the same issue where the persistance of date is not assured for the update of competition's available places (When  purchasing places the competition's available places are changed and the updates were not reflected on the file).
+
+* **FIX_06/FEATURE_Implement_Points_Display_Board** : In this branch we implemented the feature of displaying the clubs and their current points.
+
+* **Merging_branches_before_Master** : This branch served for the merging of all the previous branches before serving them to the master branch. this is done to prevent putting bugged code into the master branch, since the merging process can cause that.
+
+* **QA** : This is the "asked for" branch by the QA team. In it all the fixes features, tests are implemented and ready for testing.
+
+## Performed tests
+
+### Fixture
+
+The fixture file is named "conftest.py" and it contains all the fixtures necessary for the tests.
+
+### Unit Tests
+
+Those tests are contained in a file named "unit_tests.py" in a folder named "unit" and it contains all the unit tests for each of the issues treated and fixed.
+
+### Integration tests
+
+Those tests are contained in a file named "integration_tests.py" in a folder named "integration" and it contains all the integration tests where we test each route in a general way.
+
+### Performance tests
+
+To perform this test we used the module "locust". The test in contained in a file named "locustfile.py" in a folder named "performance" and it containes all tasks for each of the routes. The result of the test in showed in a png file in the same folder.
+
+### Test's coverage
+
+To perform this test we used the module "coverage". The result of the coverage test in showed in two png files in a folder named "coverage".
+
