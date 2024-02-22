@@ -9,9 +9,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 from Gudlft_project.server import app, saveData, loadClubs, loadCompetitions
 
+
 @contextmanager
 def captured_templates(app):
     recorded = []
+
     def record(sender, template, context, **extra):
         recorded.append((template, context))
     template_rendered.connect(record, app)
@@ -20,6 +22,7 @@ def captured_templates(app):
     finally:
         template_rendered.disconnect(record, app)
 
+
 def test_index(client):
     with captured_templates(app) as templates:
         response = client.get('/')
@@ -27,6 +30,7 @@ def test_index(client):
         assert len(templates) == 1
         template, context = templates[0]
         assert template.name == 'index.html'
+
 
 def test_showSummary(monkeypatch, client, clubs, competitions):
     monkeypatch.setattr('Gudlft_project.server.loadClubs', lambda: clubs)
@@ -40,6 +44,7 @@ def test_showSummary(monkeypatch, client, clubs, competitions):
         assert context['club'] == clubs[0]
         assert context['competitions'] == competitions
 
+
 def test_book(monkeypatch, client, clubs, competitions):
     monkeypatch.setattr('Gudlft_project.server.loadClubs', lambda: clubs)
     monkeypatch.setattr('Gudlft_project.server.loadCompetitions', lambda: competitions)
@@ -51,6 +56,7 @@ def test_book(monkeypatch, client, clubs, competitions):
         assert template.name == 'booking.html'
         assert context['club'] == clubs[0]
         assert context['competition'] == competitions[0]
+
 
 def test_pointsDisplay(monkeypatch, client, clubs, competitions):
     monkeypatch.setattr('Gudlft_project.server.loadClubs', lambda: clubs)
